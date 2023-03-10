@@ -28,7 +28,7 @@ namespace Bookstore_WebAPI.Data.Repository
            return await _context.Authors.AnyAsync(a => a.Id == Id); 
         }
 
-        public async Task<bool> CreateAsync(Author entity)
+        public async Task<bool> CreateAuthorAsync(Author entity)
         {
             await _context.AddAsync(entity);
             return await SaveAsync();

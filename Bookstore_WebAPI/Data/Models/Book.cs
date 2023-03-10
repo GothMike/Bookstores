@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public PublishingHouse? PublishingHouse { get; set; }
-        public ICollection<Author>? Author { get; set; }
+        public PublishingHouse PublishingHouse { get; set; }
+        public ICollection<AuthorBooks> AuthorBooks { get; set; }
     }
 }

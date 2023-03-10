@@ -14,27 +14,27 @@ namespace Bookstore_WebAPI.Migrations
                 name: "Authors",
                 columns: table => new
                 {
-                    author_Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authors", x => x.author_Id);
+                    table.PrimaryKey("PK_Authors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
-                    book_Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Books", x => x.book_Id);
+                    table.PrimaryKey("PK_Books", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,13 +51,37 @@ namespace Bookstore_WebAPI.Migrations
                         name: "FK_AuthorBook_Authors_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Authors",
-                        principalColumn: "author_Id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AuthorBook_Books_BooksId",
                         column: x => x.BooksId,
                         principalTable: "Books",
-                        principalColumn: "book_Id",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AuthorBooks",
+                columns: table => new
+                {
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorBooks", x => new { x.AuthorId, x.BookId });
+                    table.ForeignKey(
+                        name: "FK_AuthorBooks_Authors_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorBooks_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -65,19 +89,19 @@ namespace Bookstore_WebAPI.Migrations
                 name: "PublishingHouses",
                 columns: table => new
                 {
-                    publishinghouse_Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    BookId = table.Column<int>(type: "int", nullable: false)
+                    BookId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PublishingHouses", x => x.publishinghouse_Id);
+                    table.PrimaryKey("PK_PublishingHouses", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PublishingHouses_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
-                        principalColumn: "book_Id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -95,13 +119,37 @@ namespace Bookstore_WebAPI.Migrations
                         name: "FK_AuthorPublishingHouse_Authors_AuthorsId",
                         column: x => x.AuthorsId,
                         principalTable: "Authors",
-                        principalColumn: "author_Id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AuthorPublishingHouse_PublishingHouses_PublishingHousesId",
                         column: x => x.PublishingHousesId,
                         principalTable: "PublishingHouses",
-                        principalColumn: "publishinghouse_Id",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AuthorPublishingHouses",
+                columns: table => new
+                {
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    PublishingHouseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorPublishingHouses", x => new { x.AuthorId, x.PublishingHouseId });
+                    table.ForeignKey(
+                        name: "FK_AuthorPublishingHouses_Authors_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorPublishingHouses_PublishingHouses_PublishingHouseId",
+                        column: x => x.PublishingHouseId,
+                        principalTable: "PublishingHouses",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -111,15 +159,26 @@ namespace Bookstore_WebAPI.Migrations
                 column: "BooksId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuthorBooks_BookId",
+                table: "AuthorBooks",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AuthorPublishingHouse_PublishingHousesId",
                 table: "AuthorPublishingHouse",
                 column: "PublishingHousesId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuthorPublishingHouses_PublishingHouseId",
+                table: "AuthorPublishingHouses",
+                column: "PublishingHouseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PublishingHouses_BookId",
                 table: "PublishingHouses",
                 column: "BookId",
-                unique: true);
+                unique: true,
+                filter: "[BookId] IS NOT NULL");
         }
 
         /// <inheritdoc />
@@ -129,7 +188,13 @@ namespace Bookstore_WebAPI.Migrations
                 name: "AuthorBook");
 
             migrationBuilder.DropTable(
+                name: "AuthorBooks");
+
+            migrationBuilder.DropTable(
                 name: "AuthorPublishingHouse");
+
+            migrationBuilder.DropTable(
+                name: "AuthorPublishingHouses");
 
             migrationBuilder.DropTable(
                 name: "Authors");

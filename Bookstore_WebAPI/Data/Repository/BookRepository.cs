@@ -2,6 +2,7 @@
 using Bookstore_WebAPI.Data.Repository.Interfaces;
 using Bookstore_WebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace Bookstore_WebAPI.Data.Repository
 {
@@ -14,8 +15,9 @@ namespace Bookstore_WebAPI.Data.Repository
             _context = context;
         }
 
-        public async Task<bool> CreateAsync(Book entity)
+        public async Task<bool> CreateBookAsync(Book entity, AuthorBooks authorBooks)
         {
+            await _context.AddAsync(authorBooks);
             await _context.AddAsync(entity);
             return await SaveAsync();
         }

@@ -81,11 +81,17 @@ namespace BookStore_Tests.Repository_Tests
         {
             // Arrange
             var book = new Book { Name = "test" };
+            var author = new Author { FirstName = "test", LastName = "test" };
+            var authorBooks = new AuthorBooks
+            {
+                Author = author,
+                Book = book,
+            };
             var dbContext = await GetDatabaseContext();
             var bookRepository = new BookRepository(dbContext);
 
             // Act
-            var isCreated = await bookRepository.CreateAsync(book);
+            var isCreated = await bookRepository.CreateBookAsync(book, authorBooks);
             var isExists = await bookRepository.EntityExistsAsync(book.Id);
 
             // Assert 

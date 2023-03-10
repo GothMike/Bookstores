@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore_WebAPI.Data.Repository
 {
-    public class PublishingHouseRepository : IPublishRepository
+    public class PublishingHouseRepository : IPublishingHouseRepository
     {
         private readonly ApplicationContext _context;
 

@@ -56,8 +56,7 @@ namespace Bookstore_WebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("author_Id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -76,12 +75,41 @@ namespace Bookstore_WebAPI.Migrations
                     b.ToTable("Authors");
                 });
 
+            modelBuilder.Entity("Bookstore_WebAPI.Data.Models.AuthorBooks", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("AuthorBooks");
+                });
+
+            modelBuilder.Entity("Bookstore_WebAPI.Data.Models.AuthorPublishingHouses", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PublishingHouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "PublishingHouseId");
+
+                    b.HasIndex("PublishingHouseId");
+
+                    b.ToTable("AuthorPublishingHouses");
+                });
+
             modelBuilder.Entity("Bookstore_WebAPI.Data.Models.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("book_Id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -99,8 +127,7 @@ namespace Bookstore_WebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("publishinghouse_Id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -151,6 +178,44 @@ namespace Bookstore_WebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Bookstore_WebAPI.Data.Models.AuthorBooks", b =>
+                {
+                    b.HasOne("Bookstore_WebAPI.Data.Models.Author", "Author")
+                        .WithMany("AuthorBooks")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bookstore_WebAPI.Data.Models.Book", "Book")
+                        .WithMany("AuthorBooks")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("Bookstore_WebAPI.Data.Models.AuthorPublishingHouses", b =>
+                {
+                    b.HasOne("Bookstore_WebAPI.Data.Models.Author", "Author")
+                        .WithMany("AuthorPublishingHouses")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bookstore_WebAPI.Data.Models.PublishingHouse", "PublishingHouse")
+                        .WithMany("AuthorsPublishingHouses")
+                        .HasForeignKey("PublishingHouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("PublishingHouse");
+                });
+
             modelBuilder.Entity("Bookstore_WebAPI.Data.Models.PublishingHouse", b =>
                 {
                     b.HasOne("Bookstore_WebAPI.Data.Models.Book", "Book")
@@ -161,9 +226,24 @@ namespace Bookstore_WebAPI.Migrations
                     b.Navigation("Book");
                 });
 
+            modelBuilder.Entity("Bookstore_WebAPI.Data.Models.Author", b =>
+                {
+                    b.Navigation("AuthorBooks");
+
+                    b.Navigation("AuthorPublishingHouses");
+                });
+
             modelBuilder.Entity("Bookstore_WebAPI.Data.Models.Book", b =>
                 {
-                    b.Navigation("PublishingHouse");
+                    b.Navigation("AuthorBooks");
+
+                    b.Navigation("PublishingHouse")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bookstore_WebAPI.Data.Models.PublishingHouse", b =>
+                {
+                    b.Navigation("AuthorsPublishingHouses");
                 });
 #pragma warning restore 612, 618
         }

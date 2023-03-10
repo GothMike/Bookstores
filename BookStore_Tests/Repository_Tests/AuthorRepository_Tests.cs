@@ -84,7 +84,7 @@ namespace BookStore_Tests.Repository_Tests
             var authorRepository = new AuthorRepository(dbContext);
 
             // Act
-            var isCreated = await authorRepository.CreateAsync(author);
+            var isCreated = await authorRepository.CreateAuthorAsync(author);
             var isExists = await authorRepository.EntityExistsAsync(author.Id);
 
             // Assert 
