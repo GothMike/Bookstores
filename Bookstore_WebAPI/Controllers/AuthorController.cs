@@ -41,6 +41,20 @@ namespace Bookstore_WebAPI.Controllers
             return Ok(await _authorService.GetMappingEntityAsync(authorId));
         }
 
+        [HttpGet("{authorId}/books")]
+        [ProducesResponseType(200, Type = typeof(Author))]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> GetAllAuthorBooksAsync(int authorId)
+        {
+            if (!await _authorService.EntityExistsAsync(authorId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(await _authorService.GetAllMappingAuthorBooks(authorId));
+        }
+
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]

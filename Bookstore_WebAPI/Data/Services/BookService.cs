@@ -1,23 +1,25 @@
 ﻿using AutoMapper;
 using Bookstore_WebAPI.Data.Models;
 using Bookstore_WebAPI.Data.Models.Dto;
-using Bookstore_WebAPI.Data.Repository;
 using Bookstore_WebAPI.Data.Repository.Interfaces;
 using Bookstore_WebAPI.Data.Services.Interfaces;
+using System.Net;
 
 namespace Bookstore_WebAPI.Data.Services
 {
     public class BookService : IBookService
     {
         private readonly IBookRepository _bookRepository;
-        private readonly IMapper _mapper;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IPublishingHouseRepository _publishingHouseRepository;
+        private readonly IMapper _mapper;
 
-        public BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository)
+        public BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository, IPublishingHouseRepository publishingHouseRepository)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
             _authorRepository = authorRepository;
+            _publishingHouseRepository = publishingHouseRepository;
         }
         public async Task<ICollection<BookDto>> GetAllMappingEntitiesAsync()
         {
@@ -29,10 +31,12 @@ namespace Bookstore_WebAPI.Data.Services
             return _mapper.Map<BookDto>(await _bookRepository.GetAsync(id));
         }
 
-        public async Task<bool> CreateMappingBookAsync(BookDto entityDto, int mainAuthorId)
+        public async Task<bool> CreateMappingBookAsync(BookDto entityDto, int mainAuthorId, int publishingHouseId)
         {
             var author = await _authorRepository.GetAsync(mainAuthorId);
+            var publishingHouse = await _publishingHouseRepository.GetAsync(publishingHouseId);
             var book = MappingEntity(entityDto);
+            book.PublishingHouse = publishingHouse;
 
             var authorBooks = new AuthorBooks
             {
@@ -40,7 +44,13 @@ namespace Bookstore_WebAPI.Data.Services
                 Book = book,
             };
 
-            return await _bookRepository.CreateBookAsync(book, authorBooks);
+            var authorPublishingHouses = new AuthorPublishingHouses
+            {
+                Author = author,
+                PublishingHouse = publishingHouse,
+            };
+
+            return await _bookRepository.CreateBookAsync(book, authorBooks, authorPublishingHouses);
         }
 
         public Book MappingEntity(BookDto entityDto)
@@ -50,17 +60,21 @@ namespace Bookstore_WebAPI.Data.Services
 
         public Task<bool> UpdateMappingEntity(BookDto entity)
         {
-            throw new NotImplementedException();
+            var book = MappingEntity(entity);
+
+            return _bookRepository.UpdateAsync(book);
         }
 
-        public Task<bool> DeleteEntityAsync(int id)
+        public async Task<bool> DeleteEntityAsync(int id)
         {
-            throw new NotImplementedException();
+            var book = await _bookRepository.GetAsync(id);
+
+            return await _bookRepository.DeleteAsync(book);
         }
 
-        public Task<bool> EntityExistsAsync(int id)
+        public async Task<bool> EntityExistsAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _bookRepository.EntityExistsAsync(id);
         }
     }
 }

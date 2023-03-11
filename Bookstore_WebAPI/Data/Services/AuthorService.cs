@@ -9,11 +9,13 @@ namespace Bookstore_WebAPI.Data.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
+        private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
 
-        public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
+        public AuthorService(IAuthorRepository authorRepository, IBookRepository bookRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
+            _bookRepository = bookRepository;
             _mapper = mapper;
         }
 
@@ -32,6 +34,7 @@ namespace Bookstore_WebAPI.Data.Services
         public async Task<bool> CreateMappingAuthorAsync(AuthorDto entityDto)
         {
             var author = MappingEntity(entityDto);
+
             return await _authorRepository.CreateAuthorAsync(author);
         }
 
@@ -50,6 +53,9 @@ namespace Bookstore_WebAPI.Data.Services
         public async Task<bool> DeleteEntityAsync(int id)
         {
             var author = await _authorRepository.GetAsync(id);
+            var authorBooks = await _bookRepository.GetAllAuthorsBooks(author.Id);
+
+            await _bookRepository.DeleteAllAsync(authorBooks);
 
             return await _authorRepository.DeleteAsync(author);
         }
@@ -57,6 +63,12 @@ namespace Bookstore_WebAPI.Data.Services
         public Task<bool> EntityExistsAsync(int id)
         {
             return _authorRepository.EntityExistsAsync(id);
+        }
+
+        public async Task<ICollection<BookDto>> GetAllMappingAuthorBooks(int id)
+        {
+         var author = await _authorRepository.GetAsync(id);
+         return _mapper.Map<ICollection<BookDto>>(await _bookRepository.GetAllAuthorsBooks(author.Id));
         }
     }
 }

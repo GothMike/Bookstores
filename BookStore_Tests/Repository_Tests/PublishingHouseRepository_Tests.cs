@@ -85,7 +85,7 @@ namespace BookStore_Tests.Repository_Tests
             var publishingHouseRepository = new PublishingHouseRepository(dbContext);
 
             // Act
-            var isCreated = await publishingHouseRepository.CreateAsync(publishingHouse);
+            var isCreated = await publishingHouseRepository.CreatePublishingHouseAsync(publishingHouse);
             var isExists = await publishingHouseRepository.EntityExistsAsync(publishingHouse.Id);
 
             // Assert 

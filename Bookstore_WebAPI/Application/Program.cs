@@ -20,13 +20,8 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IPublishingHouseService, PublishingHouseService>();
 
-
-
-
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
 {

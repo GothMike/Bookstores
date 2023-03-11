@@ -51,5 +51,11 @@ namespace Bookstore_WebAPI.Data.Repository
             var saved = await _context.SaveChangesAsync();
             return saved > 0 ? true : false;
         }
+
+        public async Task<bool> DeleteAllAsync(List<Author> entities)
+        {
+            _context.RemoveRange(entities);
+            return await SaveAsync();
+        }
     }
 }

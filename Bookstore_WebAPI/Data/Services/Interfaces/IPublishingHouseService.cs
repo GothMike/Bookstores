@@ -5,5 +5,6 @@ namespace Bookstore_WebAPI.Data.Services.Interfaces
 {
     public interface IPublishingHouseService : IBaseService<PublishingHouseDto, PublishingHouse>
     {
+        Task<bool> CreateMappingPublishingHouseAsync(PublishingHouseDto entityDto);
     }
 }

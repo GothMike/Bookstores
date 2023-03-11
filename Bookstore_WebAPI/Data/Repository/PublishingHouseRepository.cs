@@ -14,7 +14,7 @@ namespace Bookstore_WebAPI.Data.Repository
             _context = context;
         }
 
-        public async Task<bool> CreateAsync(PublishingHouse entity)
+        public async Task<bool> CreatePublishingHouseAsync(PublishingHouse entity)
         {
             await _context.AddAsync(entity);
             return await SaveAsync();
@@ -51,6 +51,12 @@ namespace Bookstore_WebAPI.Data.Repository
         {
             var saved = await _context.SaveChangesAsync();
             return saved > 0 ? true : false;
+        }
+
+        public async Task<bool> DeleteAllAsync(List<PublishingHouse> entities)
+        {
+            _context.RemoveRange(entities);
+            return await SaveAsync();
         }
     }
 }

@@ -15,16 +15,18 @@ namespace Bookstore_WebAPI.Data.Repository
             _context = context;
         }
 
-        public async Task<bool> CreateBookAsync(Book entity, AuthorBooks authorBooks)
+        public async Task<bool> CreateBookAsync(Book entity, AuthorBooks authorBooks, AuthorPublishingHouses authorPublishingHouses)
         {
             await _context.AddAsync(authorBooks);
             await _context.AddAsync(entity);
+            await _context.AddAsync(authorPublishingHouses);
+
             return await SaveAsync();
         }
 
         public async Task<bool> DeleteAsync(Book entity)
         {
-           _context.Remove(entity);
+            _context.Remove(entity);
             return await SaveAsync();
         }
 
@@ -53,6 +55,39 @@ namespace Bookstore_WebAPI.Data.Repository
         {
             var saved = await _context.SaveChangesAsync();
             return saved > 0 ? true : false;
+        }
+
+        public async Task<List<Book>> GetAllAuthorsBooks(int id)
+        {
+            var authorBooks = await _context.AuthorBooks.Where(i => i.AuthorId == id).ToListAsync();
+            var books = new List<Book>();
+
+            foreach(var book in authorBooks)
+            {
+                books.Add(await GetAsync(book.BookId));
+            }
+
+            return books;
+        }
+
+        public async Task<bool> DeleteAllAsync(List<Book> entities)
+        {
+            _context.RemoveRange(entities);
+            return await SaveAsync();
+        }
+
+        public async Task<List<Book>> GetAllPublishingHouseBooks(int id)
+        {
+            var publishingHouseBooks = await _context.Books.Where(i => i.PublishingHouseId == id).ToListAsync();
+
+            var books = new List<Book>();
+
+            foreach (var book in publishingHouseBooks)
+            {
+                books.Add(await GetAsync(book.PublishingHouseId));
+            }
+
+            return books;
         }
     }
 }

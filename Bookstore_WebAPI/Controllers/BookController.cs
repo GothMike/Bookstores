@@ -14,14 +14,10 @@ namespace Bookstore_WebAPI.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
-        private readonly IBookRepository _bookRepository;
-        private readonly IAuthorRepository _authorRepository;
 
-        public BookController(IBookService bookService, IBookRepository bookRepository, IAuthorRepository authorRepository)
+        public BookController(IBookService bookService)
         {
             _bookService = bookService;
-            _bookRepository = bookRepository;
-            _authorRepository = authorRepository;
         }
 
         [HttpGet]
@@ -35,11 +31,11 @@ namespace Bookstore_WebAPI.Controllers
         }
 
         [HttpGet("{bookId}")]
-        [ProducesResponseType(200, Type = typeof(Author))]
+        [ProducesResponseType(200, Type = typeof(Book))]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetBookAsync(int bookId)
         {
-            if (!await _bookRepository.EntityExistsAsync(bookId))
+            if (!await _bookService.EntityExistsAsync(bookId))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -51,7 +47,7 @@ namespace Bookstore_WebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> CreateBookAsync([FromBody] BookDto bookDto, int authorId)
+        public async Task<IActionResult> CreateBookAsync([FromBody] BookDto bookDto, int authorId, int publishingHouseId)
         {
             if (bookDto == null)
                 return BadRequest(ModelState);
@@ -62,7 +58,7 @@ namespace Bookstore_WebAPI.Controllers
             if (authorId == null)
                 return BadRequest(ModelState);
 
-            if (!await _bookService.CreateMappingBookAsync(bookDto, authorId))
+            if (!await _bookService.CreateMappingBookAsync(bookDto, authorId, publishingHouseId))
             {
                 ModelState.AddModelError("", "Что-то пошло не так при создании книги");
                 return StatusCode(500, ModelState);
@@ -83,15 +79,13 @@ namespace Bookstore_WebAPI.Controllers
             if (bookId != bookDto.Id)
                 return BadRequest();
 
-            if (!await _bookRepository.EntityExistsAsync(bookId))
+            if (!await _bookService.EntityExistsAsync(bookId))
                 return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var bookMap = _bookService.MappingEntity(bookDto);
-
-            if (!await _bookRepository.UpdateAsync(bookMap))
+            if (!await _bookService.UpdateMappingEntity(bookDto))
             {
                 ModelState.AddModelError("", "Что-то пошло не так при редактировании книги");
                 return StatusCode(500, ModelState);
@@ -106,15 +100,13 @@ namespace Bookstore_WebAPI.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteBookAsync(int bookId)
         {
-            if (!await _bookRepository.EntityExistsAsync(bookId))
+            if (!await _bookService.EntityExistsAsync(bookId))
                 return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var book = await _bookRepository.GetAsync(bookId);
-
-            if (!await _bookRepository.DeleteAsync(book))
+            if (!await _bookService.DeleteEntityAsync(bookId))
             {
                 ModelState.AddModelError("", "Что-то пошло не так при удалении книги");
                 return StatusCode(500, ModelState);

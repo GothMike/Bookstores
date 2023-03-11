@@ -14,7 +14,7 @@ namespace Bookstore_WebAPI.Helper
 
             CreateMap<AuthorDto, Author>();
             CreateMap<BookDto, Book>();
-            CreateMap<PublishingHouse, PublishingHouseDto>();
+            CreateMap<PublishingHouseDto, PublishingHouse>();
         }
     }
 }

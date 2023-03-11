@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Bookstore_WebAPI.Data.Models;
 using Bookstore_WebAPI.Data.Models.Dto;
-using Bookstore_WebAPI.Data.Repository;
 using Bookstore_WebAPI.Data.Repository.Interfaces;
 using Bookstore_WebAPI.Data.Services.Interfaces;
 
@@ -18,14 +17,23 @@ namespace Bookstore_WebAPI.Data.Services
             _mapper = mapper;
         }
 
-        public Task<bool> DeleteEntityAsync(int id)
+        public async Task<bool> CreateMappingPublishingHouseAsync(PublishingHouseDto entityDto)
         {
-            throw new NotImplementedException();
+            var publishingHouse = MappingEntity(entityDto);
+            var create = await _publishingHouseRepository.CreatePublishingHouseAsync(publishingHouse);
+            return create;
+        }
+
+        public async Task<bool> DeleteEntityAsync(int id)
+        {
+            var publishingHouse = await _publishingHouseRepository.GetAsync(id);
+
+            return await _publishingHouseRepository.DeleteAsync(publishingHouse);
         }
 
         public Task<bool> EntityExistsAsync(int id)
         {
-            throw new NotImplementedException();
+            return _publishingHouseRepository.EntityExistsAsync(id);
         }
 
         public async Task<ICollection<PublishingHouseDto>> GetAllMappingEntitiesAsync()
@@ -45,7 +53,9 @@ namespace Bookstore_WebAPI.Data.Services
 
         public Task<bool> UpdateMappingEntity(PublishingHouseDto entity)
         {
-            throw new NotImplementedException();
+            var publishingHouse = MappingEntity(entity);
+
+            return _publishingHouseRepository.UpdateAsync(publishingHouse);
         }
     }
 }

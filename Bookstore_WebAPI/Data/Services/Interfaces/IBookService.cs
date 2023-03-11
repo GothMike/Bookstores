@@ -5,6 +5,6 @@ namespace Bookstore_WebAPI.Data.Services.Interfaces
 {
     public interface IBookService : IBaseService<BookDto, Book>
     {
-        Task<bool> CreateMappingBookAsync(BookDto entityDto, int mainAuthorId);
+        Task<bool> CreateMappingBookAsync(BookDto entityDto, int mainAuthorId, int publishingHouseId);
     }
 }
