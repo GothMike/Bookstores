@@ -1,11 +1,13 @@
-﻿namespace Bookstore_WebAPI.Data.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bookstore_WebAPI.Data.Models
 {
     public class PublishingHouse
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int? BookId { get; set; }
-        public Book? Book { get; set; }
-        public ICollection<Author>? Authors { get; set; }
+        public ICollection<Book>? Books { get; set; }
+        public ICollection<AuthorPublishingHouses>? AuthorsPublishingHouses { get; set; }
     }
 }
