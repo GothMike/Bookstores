@@ -129,5 +129,22 @@ namespace BookStore_Tests.Repository_Tests
             updatedPublishingHouse.Should().BeOfType<PublishingHouse>();
             updatedPublishingHouse.Should().NotBeNull();
         }
+
+        [Fact]
+        public async void PublishingHouseRepository_DeleteAllAsync_ReturnTrue()
+        {
+            // Arrange
+            var dbContext = await GetDatabaseContext();
+            var publishingHouseRepository = new PublishingHouseRepository(dbContext);
+            var ph1 = await publishingHouseRepository.GetAsync(1);
+            var ph2 = await publishingHouseRepository.GetAsync(2);
+            List<PublishingHouse> phs = new List<PublishingHouse> { ph1, ph2 };
+
+            // Act
+            var isDeleted = await publishingHouseRepository.DeleteAllAsync(phs);
+
+            // Assert 
+            isDeleted.Should().BeTrue();
+        }
     }
 }

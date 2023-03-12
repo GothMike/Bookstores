@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Bookstore_WebAPI.Data.Models;
 using Bookstore_WebAPI.Data.Models.Dto;
 using Bookstore_WebAPI.Data.Repository.Interfaces;
@@ -58,11 +59,14 @@ namespace Bookstore_WebAPI.Data.Services
             return _mapper.Map<Book>(entityDto);
         }
 
-        public Task<bool> UpdateMappingEntity(BookDto entity)
+        public async Task<bool> UpdateMappingEntityAsync(BookDto entity)
         {
-            var book = MappingEntity(entity);
+            var updatedBook = MappingEntity(entity);
+            var book = await _bookRepository.GetAsync(updatedBook.Id);
 
-            return _bookRepository.UpdateAsync(book);
+            book.Name = updatedBook.Name;
+
+            return await _bookRepository.UpdateAsync(book);
         }
 
         public async Task<bool> DeleteEntityAsync(int id)
@@ -75,6 +79,17 @@ namespace Bookstore_WebAPI.Data.Services
         public async Task<bool> EntityExistsAsync(int id)
         {
             return await _bookRepository.EntityExistsAsync(id);
+        }
+
+        public async Task<bool> CheckDependentEntitiesExist(int mainAuthorId, int publishingHouseId)
+        {
+           var author = await _authorRepository.EntityExistsAsync(mainAuthorId);
+            var publishingHouse = await _publishingHouseRepository.EntityExistsAsync(publishingHouseId);
+                if (author && publishingHouse)
+                    return true;
+
+                else
+                    return false;
         }
     }
 }

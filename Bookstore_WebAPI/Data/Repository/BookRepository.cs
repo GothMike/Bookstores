@@ -1,6 +1,7 @@
 ﻿using Bookstore_WebAPI.Data.Models;
 using Bookstore_WebAPI.Data.Repository.Interfaces;
 using Bookstore_WebAPI.Persistence;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 
@@ -42,12 +43,20 @@ namespace Bookstore_WebAPI.Data.Repository
 
         public async Task<Book> GetAsync(int Id)
         {
-            return await _context.Books.Where(b => b.Id == Id).FirstOrDefaultAsync();
+            var book = await _context.Books.Where(b => b.Id == Id).FirstOrDefaultAsync();
+            var authorBooks = await _context.AuthorBooks.Where(ab => ab.BookId == Id).ToListAsync();
+                var publishingHouse = await _context.AuthorPublishingHouses.Where(aph => aph.AuthorId == authorBooks[0].AuthorId).ToListAsync();
+
+            book.AuthorBooks = authorBooks;
+            book.PublishingHouse = await _context.PublishingHouses.Where(ph => ph.Id == publishingHouse[0].PublishingHouseId).FirstOrDefaultAsync();
+
+            return book;
         }
 
         public async Task<bool> UpdateAsync(Book entity)
         {
-            _context.Update(entity);
+            _context.Books.Update(entity);
+
             return await SaveAsync();
         }
 

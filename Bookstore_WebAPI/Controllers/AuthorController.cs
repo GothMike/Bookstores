@@ -93,7 +93,7 @@ namespace Bookstore_WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!await _authorService.UpdateMappingEntity(authorDto))
+            if (!await _authorService.UpdateMappingEntityAsync(authorDto))
             {
                 ModelState.AddModelError("", "Что-то пошло не так при редактировании автора");
                 return StatusCode(500, ModelState);

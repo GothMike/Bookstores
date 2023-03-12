@@ -7,6 +7,5 @@ namespace Bookstore_WebAPI.Data.Services.Interfaces
     {
         Task<bool> CreateMappingAuthorAsync(AuthorDto entityDto);
         Task<ICollection<BookDto>> GetAllMappingAuthorBooks(int id);
-
     }
 }

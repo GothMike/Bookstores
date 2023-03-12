@@ -101,11 +101,11 @@ namespace BookStore_Tests.Repository_Tests
             var author = await authorRepository.GetAsync(1);
 
             // Act
-            var isCreated = await authorRepository.DeleteAsync(author);
+            var isDeleted = await authorRepository.DeleteAsync(author);
             var isExists = await authorRepository.EntityExistsAsync(author.Id);
 
             // Assert 
-            isCreated.Should().BeTrue();
+            isDeleted.Should().BeTrue();
             isExists.Should().BeFalse();
         }
 
@@ -129,6 +129,23 @@ namespace BookStore_Tests.Repository_Tests
             updatedAuthor.LastName.Should().Be("test");
             updatedAuthor.Should().BeOfType<Author>();
             updatedAuthor.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void AuthorRepository_DeleteAllAsync_ReturnTrue()
+        {
+            // Arrange
+            var dbContext = await GetDatabaseContext();
+            var authorRepository = new AuthorRepository(dbContext);
+            var author1 = await authorRepository.GetAsync(1);
+            var author2 = await authorRepository.GetAsync(2);
+            List<Author> authors = new List<Author> { author1, author2 };
+
+            // Act
+           var isDeleted = await authorRepository.DeleteAllAsync(authors);
+
+            // Assert 
+            isDeleted.Should().BeTrue();
         }
     }
 }

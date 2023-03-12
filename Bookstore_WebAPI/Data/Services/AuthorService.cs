@@ -26,16 +26,12 @@ namespace Bookstore_WebAPI.Data.Services
 
         public async Task<AuthorDto> GetMappingEntityAsync(int id)
         {
-            var author = await _authorRepository.GetAsync(id);
-
-            return _mapper.Map<AuthorDto>(author);
+            return _mapper.Map<AuthorDto>(await _authorRepository.GetAsync(id));
         }
 
         public async Task<bool> CreateMappingAuthorAsync(AuthorDto entityDto)
         {
-            var author = MappingEntity(entityDto);
-
-            return await _authorRepository.CreateAuthorAsync(author);
+            return await _authorRepository.CreateAuthorAsync(MappingEntity(entityDto));
         }
 
         public Author MappingEntity(AuthorDto entityDto)
@@ -43,11 +39,9 @@ namespace Bookstore_WebAPI.Data.Services
             return _mapper.Map<Author>(entityDto);
         }
 
-        public async Task<bool> UpdateMappingEntity(AuthorDto entity)
+        public async Task<bool> UpdateMappingEntityAsync(AuthorDto entity)
         {
-            var author = MappingEntity(entity);
-
-            return await _authorRepository.UpdateAsync(author);
+            return await _authorRepository.UpdateAsync(MappingEntity(entity));
         }
 
         public async Task<bool> DeleteEntityAsync(int id)

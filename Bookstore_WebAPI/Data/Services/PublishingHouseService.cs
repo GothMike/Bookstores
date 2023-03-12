@@ -51,7 +51,7 @@ namespace Bookstore_WebAPI.Data.Services
             return _mapper.Map<PublishingHouse>(entityDto);
         }
 
-        public Task<bool> UpdateMappingEntity(PublishingHouseDto entity)
+        public Task<bool> UpdateMappingEntityAsync(PublishingHouseDto entity)
         {
             var publishingHouse = MappingEntity(entity);
 

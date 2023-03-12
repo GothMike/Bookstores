@@ -52,6 +52,9 @@ namespace Bookstore_WebAPI.Controllers
             if (bookDto == null)
                 return BadRequest(ModelState);
 
+            if (!await _bookService.CheckDependentEntitiesExist(authorId, publishingHouseId))
+                return BadRequest();
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -85,7 +88,7 @@ namespace Bookstore_WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!await _bookService.UpdateMappingEntity(bookDto))
+            if (!await _bookService.UpdateMappingEntityAsync(bookDto))
             {
                 ModelState.AddModelError("", "Что-то пошло не так при редактировании книги");
                 return StatusCode(500, ModelState);

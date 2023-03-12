@@ -80,7 +80,7 @@ namespace Bookstore_WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!await _publishingHouseService.UpdateMappingEntity(publishingHouseDto))
+            if (!await _publishingHouseService.UpdateMappingEntityAsync(publishingHouseDto))
             {
                 ModelState.AddModelError("", "Что-то пошло не так при редактировании");
                 return StatusCode(500, ModelState);
